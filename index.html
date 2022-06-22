@@ -24,12 +24,19 @@
 			color:#1E1C1C;
 			background-color:rgba(4,144,144,0.4);
 			border-radius: 25px 25px 25px 25px;
-			border: 5px solid rgba(38,60,60,0.6);
+			border: 5px solid rgba(38,60,60,0.8);
 			padding: 5px;
 			height:30vh;
 			width:25vw;
 			opacity:1;
 			z-index:100;
+		}
+		.MyTables{
+			border: 5px solid rgba(33,153,153,0.7);
+			border-radius: 10px 10px 10px 10px;
+			z-index:2;
+			width:fit-content;
+			<!-- background-color:rgba(4,144,144,0.4); -->
 		}
 		table{
 		text-align:center;
@@ -42,7 +49,7 @@
 		td{
 		text-align:center;
 		}
-		.tablebutton{
+		.MyButton{
 			color: #fff;
 			background-color: #6C55F9;
 			border-color: transparent;
@@ -52,6 +59,16 @@
 			color:#1E1C1C;
 			background-color:rgba(4,144,144,0.4);
 			text-align:center;
+		}
+		.pop-out{
+			transition: transform .5s;
+			z-index:2;
+		}
+		.pop-out:hover{
+			z-index:10
+			-ms-transform: scale(2,2);
+			-webkit-transform: scale(2,2);
+			transform: scale(2,2);
 		}
 	</style>
 </head>
@@ -87,7 +104,7 @@
               <a class="nav-link" href="#Contact" data-role="smoothscroll">Contact</a>
             </li>
             <li class="nav-item">
-              <a class="btn btn-primary ml-lg-2" href="#">Run Simulation</a>
+              <a class="btn btn-primary ml-lg-2" href="#" onclick=SimulationAlert()>Run Simulation</a>
             </li>
           </ul>
         </div>
@@ -100,13 +117,14 @@
         <div class="row align-items-center flex-wrap-reverse h-100">
           <div class="col-md-6 py-5 wow fadeInLeft">
             <h1 class="mb-4">Simulation Tool: Rotodynamic Analysis</h1>
-            <p class="text-lg text-grey mb-5">(DEMO) Calculate Campbell diagrams (DEMO)</p>
+            <p class="text-lg text-grey mb-5">(DEMO) Work in progress (DEMO)</p>
             <a href="#" class="btn btn-primary btn-split" onclick=PlayTutorial() id='PlayButton'> Watch Tutorial <div class="fab"><span class="mai-play"></span></div></a>
           </div>
           <div class="col-md-6 py-5 wow zoomIn">
             <div class="img-fluid text-center">
 				<video width=400 controls id='TutorialVideo'>
-					<source src="../assets/img/PyFFTW_Trimmed_32.mp4" type="video/mp4">
+					<!-- <source src="../assets/img/PyFFTW_Trimmed_32.mp4" type="video/mp4"> -->
+					<source src="https://github.com/adlar2de/SimulationTool/blob/main/Files/PyFFTW_Trimmed_32.mp4?raw=true" type="video/mp4">
 				</video>
 <!--              <img src="../assets/img/banner_image_1.svg" alt=""> -->
             </div>
@@ -118,7 +136,8 @@
   </header>
 
   <div class="page-section">
-  	<!-- POPUP TABLE -->
+  <!-- POPUP TABLES -->
+    <!-- TABLE 1: Geometry -->
 	<div id="GeometryTable" title="Geometry" style="display:none" class=popuptable>
 		<table style="width:100%; height:100%; background-color:rgba(4,144,144,0.7)">
 			<tr>
@@ -154,12 +173,11 @@
 			</tr>
 		</table>
 	</div>
-	<div style="position:absolute;display:none; bottom:20vh; left:50vw; z-index:100" id="Sketches">
-		<!-- <img src="../assets/img/Sketch_Annotations.png" alt="" width=50%> -->
-		<!-- <img src="../assets/img/Sketch_Annotations.png" alt="" height=300> -->
+	<div style="position:absolute;display:none; bottom:20vh; left:50vw; z-index:100" id="GeomSketches">
 		<img src="https://github.com/adlar2de/SimulationTool/blob/main/Files/Images/Sketch_Annotations.png?raw=true" alt="" height=300>
 	</div>
-	<!-- END GEOM  -->
+	<!-- Geometry Table Finished  -->
+	<!-- TABLE 2: Analysis -->
 	<div id="AnalysisTable" title="Analysis" style="display:none" class=popuptable>
 		<table style="width:100%; height:100%; background-color:rgba(4,144,144,0.7)">
 			<tr>
@@ -170,11 +188,16 @@
 			</tr>
 			<tr>
 				<td contenteditable>50 000</td>
-				<td contenteditable><input type="number" value=5 min=1 style="width:8vh"></td>
+				<td contenteditable><input type="number" value=10 min=1 style="width:8vh"></td>
 				<td contenteditable><input type="number" value=10 min=1 style="width:8vh"></td>
 			</tr>
 		</table>
 	</div>
+	<div style="position:absolute;display:none; bottom:20vh; left:45vw; z-index:100" id="AnalysisSketches">
+		<img src="https://github.com/adlar2de/SimulationTool/blob/main/Files/Images/Campbell_Annotated.png?raw=true" alt="" height=350>
+	</div>
+	<!-- Analysis Table Finished -->
+	<!-- TABLE 3: Advanced -->
 	<div id="AdvancedTable" title="Advanced" style="display:none" class=popuptable>
 		<table style="width:100%; height:100%; background-color:rgba(4,144,144,0.7)">
 			<tr>
@@ -195,7 +218,11 @@
 			</tr>
 		</table>
 	</div>
-	<!-- END POPUP TABLE -->
+	<div style="position:absolute;display:none; bottom:20vh; left:45vw; z-index:100" id="Mesh">
+		<img src="https://github.com/adlar2de/SimulationTool/blob/main/Files/Images/Mesh.png?raw=true" alt="" height=350>
+	</div>
+	<!-- Analysis Table Finished -->
+	<!-- END POPUP TABLES -->
     <div class="container" id="SimSetup">
 	  <span class="subhead">Parameters</span>
       <div class="row">
@@ -208,7 +235,6 @@
               <h5 class="text-secondary">Geometry</h5>
               <p>Define geometry of the system</p>
 			  <p>All measures are in mm</p>
-<!--              <a href="geometry.html" class="btn btn-primary">Set Geometry</a>-->
 				<button onclick=DisplayGeomTable() id='GeometryButton' class=tablebutton> Set Geometry </button>
             </div>
           </div>
@@ -221,7 +247,6 @@
             <div class="body">
               <h5 class="text-secondary">Analysis</h5>
               <p>Decide important parameters for the simulations</p>
-<!--              <a href="analysis.html" class="btn btn-primary">Analysis Parameters</a> -->
 			  <button onclick=DisplayAnalysisTable() id='AnalysisButton' class=tablebutton> Analysis Parameters </button>
             </div>
           </div>
@@ -234,14 +259,13 @@
             <div class="body">
               <h5 class="text-secondary">Advanced</h5>
               <p>Only for experienced users</p>
-<!--			<a href="advanced.html" class="btn btn-primary">Advanced Parameters</a> -->
 			  <button onclick=DisplayAdvancedTable() id='AdvancedButton' class=tablebutton> Advanced Parameters </button>
             </div>
           </div>
         </div>
       </div>
-    </div> <!-- .container -->
-  </div> <!-- .page-section -->
+    </div>
+  </div>
 
   <div class="page-section" id="About">
     <div class="container">
@@ -250,306 +274,111 @@
           <span class="subhead">About the tool</span>
           <h2 class="title-section">Reliable mechanical solver: ABAQUS</h2>
           <div class="divider"></div>
-			<!-- <p>We launch ABAQUS simulations.</p> -->
-			<p>Normal modes and natural frequencies of the rotating system are calculated.</p>
+			<p>Normal modes and natural frequencies of the rotating system are calculated using the finite element based solver ABAQUS.</p>
           <a href="https://www.3ds.com/products-services/simulia/products/abaqus/" target="_blank" class="btn btn-primary mt-3">Read More</a>
         </div>
         <div class="col-lg-6 py-3 wow fadeInRight">
           <div class="img-fluid py-3 text-center">
-            <img src="../assets/img/Simulation_Default.png" alt="" width=400>
+			<img src="https://github.com/adlar2de/SimulationTool/blob/main/Files/Images/Simulation_Default.png?raw=true" alt="" width=400>
           </div>
         </div>
       </div>
-    </div> <!-- .container -->
-  </div> <!-- .page-section -->
+    </div>
+  </div>
 
-<!--
-  <div class="page-section bg-light">
-    <div class="container">
-      <div class="text-center wow fadeInUp">
-        <div class="subhead">Our services</div>
-        <h2 class="title-section">How SEO Team Can Help</h2>
-        <div class="divider mx-auto"></div>
-      </div>
-
-        <div class="row">
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-4 col-xl-3 py-3 wow zoomIn">
-            <div class="features">
-              <div class="header mb-3">
-                <span class="mai-business"></span>
-              </div>
-              <h5>OnSite SEO</h5>
-              <p>We analyse your website's structure, internal architecture & other key</p>
-            </div>
-          </div>
-        </div>
-
-    </div> <!-- .container -->
-<!--  </div> <!-- .page-section -->
-<!--
-  <div class="page-section banner-seo-check">
-    <div class="wrap bg-image" style="background-image: url(../assets/img/bg_pattern.svg);">
-      <div class="container text-center">
-        <div class="row justify-content-center wow fadeInUp">
-          <div class="col-lg-8">
-            <h2 class="mb-4">Check your Website SEO</h2>
-            <form action="#">
-              <input type="text" class="form-control" placeholder="E.g google.com">
-              <button type="submit" class="btn btn-success">Check Now</button>
-            </form>
-          </div>
-        </div>
-      </div> <!-- .container -->
-<!--    </div> <!-- .wrap -->
-<!--  </div> <!-- .page-section -->
-
-  <div class="page-section">
-    <div class="container">
+  <div class="page-section" id="Results">
+    <div class="container-fluid">
       <div class="text-center wow fadeInUp">
         <div class="subhead">Results</div>
         <h2 class="title-section">Visualise Vibration Modes</h2>
         <div class="divider mx-auto"></div>
       </div>
       <div class="row mt-5">
-        <div class="col-lg-4 py-3 wow zoomIn">
-          <div class="card-pricing">
+        <div class="col-lg-4 py-3 wow zoomIn" >
+          <div class="card-pricing" id="TableCol">
             <div class="header">
               <div class="pricing-type">Table</div>
               <div class="price">
-                <!-- <span class="dollar">$</span> -->
-                <h1>Natural Frequency<span class="suffix">(Hz)</span></h1>
+                <h1>Frequency Values<span class="suffix">(Hz)</span></h1>
               </div>
-              <h5>Modes</h5>
             </div>
             <div class="body">
 			<center>
-			  <table>
-				<tr>
-					<th>a</th>
-					<th>b</th>
-					<th>c</th>
-				</tr>
-				<tr>
-					<td>d</td>
-					<td>e</td>
-					<td>f</td>
-				</tr>
+			  <table id="CampbellTable" class=MyTables>
 			  </table>
 			</center>
-              <!-- <p>25 Analytics <span class="suffix">Campaign</span></p> -->
-              <!-- <p>1,300 Change <span class="suffix">Keywords</span></p> -->
-              <!-- <p>Social Media <span class="suffix">Reviews</span></p> -->
-              <!-- <p>1 Free <span class="suffix">Optimization</span></p> -->
-              <!-- <p>24/7 <span class="suffix">Support</span></p> -->
             </div>
             <div class="footer">
-              <a href="#" class="btn btn-pricing btn-block">Load</a>
+			  <button onclick="LoadCampbell()" class="MyButton" id="TableButton"> Load </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 py-3 wow zoomIn" >
+          <div class="card-pricing marked" id="SecondCol">
+            <div class="header">
+              <div class="pricing-type">Graphic</div>
+              <div class="price">
+                <h1>Campbell Diagram</h1>
+              </div>
+            </div>
+            <div class="body">
+              <img src="../assets/img/Campbell_Default.png" width=100% class="pop-out" id="DefaultCampbell"> </img>
             </div>
           </div>
         </div>
 
         <div class="col-lg-4 py-3 wow zoomIn">
-          <div class="card-pricing marked">
+          <div class="card-pricing" id="ThirdCol">
             <div class="header">
-              <div class="pricing-type">Standar</div>
+              <div class="pricing-type">Geometry</div>
               <div class="price">
-                <span class="dollar">$</span>
-                <h1>59<span class="suffix">.99</span></h1>
+                <h1>ABAQUS Geometry</h1>
               </div>
-              <h5>Per Month</h5>
             </div>
             <div class="body">
-              <p>25 Analytics <span class="suffix">Campaign</span></p>
-              <p>1,300 Change <span class="suffix">Keywords</span></p>
-              <p>Social Media <span class="suffix">Reviews</span></p>
-              <p>1 Free <span class="suffix">Optimization</span></p>
-              <p>24/7 <span class="suffix">Support</span></p>
+              <img src="https://github.com/adlar2de/SimulationTool/blob/main/Files/Images/Sim_1.png?raw=true" width=100% id="AbqGeom"> </img>
             </div>
             <div class="footer">
-              <a href="#" class="btn btn-pricing btn-block">Subscribe</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 py-3 wow zoomIn">
-          <div class="card-pricing">
-            <div class="header">
-              <div class="pricing-type">Professional</div>
-              <div class="price">
-                <span class="dollar">$</span>
-                <h1>99<span class="suffix">.99</span></h1>
-              </div>
-              <h5>Per Month</h5>
-            </div>
-            <div class="body">
-              <p>25 Analytics <span class="suffix">Campaign</span></p>
-              <p>1,300 Change <span class="suffix">Keywords</span></p>
-              <p>Social Media <span class="suffix">Reviews</span></p>
-              <p>1 Free <span class="suffix">Optimization</span></p>
-              <p>24/7 <span class="suffix">Support</span></p>
-            </div>
-            <div class="footer">
-              <a href="#" class="btn btn-pricing btn-block">Subscribe</a>
+              <button onclick="ChangeGeom()" class="MyButton" id="GeomButton"> Next </button>
             </div>
           </div>
         </div>
 
       </div>
-    </div> <!-- .container -->
-  </div> <!-- .page-section -->
+    </div>
+  </div>
 
-  <!-- Banner info -->
   <div class="page-section banner-info">
     <div class="wrap bg-image" style="background-image: url(../assets/img/bg_pattern.svg);">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-6 py-3 pr-lg-5 wow fadeInUp">
-            <h2 class="title-section">SEO to Improve Brand <br> Visibility</h2>
+            <h2 class="title-section">Missing Features</h2>
             <div class="divider"></div>
-            <p>We're an experienced and talented team of passionate consultants who breathe with search engine marketing.</p>
+            <p>This page is only a demo. There are two main features that will be added in the future:</p>
             
             <ul class="theme-list theme-list-light text-white">
               <li>
-                <div class="h5">SEO Content Strategy</div>
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor</p>
+                <div class="h5">Actual Simulation Capabilities</div>
+                <p>All the data and figures have been pre-simulated. No actual simulation is happening.<br>Acces to a server with ABAQUS software (and available runtime licenses) is necessary for this.</p>
               </li>
               <li>
-                <div class="h5">B2B SEO</div>
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor</p>
+                <div class="h5">Serious Visualisation Tool</div>
+                <p>Result visualisation options are limited at the moment: a table with the relevant data, a figure showing a Campbell Diagram, and images of the normal modes.<br>Comparison between different normal modes and simultaneous visualisation of various modes/views will be possible in future versions.</p>
               </li>
             </ul>
           </div>
           <div class="col-lg-6 py-3 wow fadeInRight">
             <div class="img-fluid text-center">
               <img src="../assets/img/banner_image_2.svg" alt="">
+			  <p> This image will be substituted by a more relevant one, too. </p>
             </div>
           </div>
         </div>
       </div>
-    </div> <!-- .wrap -->
-  </div> <!-- .page-section -->
-
-  <!-- Blog -->
-<!--  <div class="page-section" >
-    <div class="container">
-      <div class="text-center wow fadeInUp">
-        <div class="subhead">Our Blog</div>
-        <h2 class="title-section">Read Latest News</h2>
-        <div class="divider mx-auto"></div>
-      </div>
-
-      <div class="row mt-5">
-        <div class="col-lg-4 py-3 wow fadeInUp">
-          <div class="card-blog">
-            <div class="header">
-              <div class="post-thumb">
-                <img src="../assets/img/blog/blog-1.jpg" alt="">
-              </div>
-            </div>
-            <div class="body">
-              <h5 class="post-title"><a href="#">Source of Content Inspiration</a></h5>
-              <div class="post-date">Posted on <a href="#">27 Jan 2020</a></div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 py-3 wow fadeInUp">
-          <div class="card-blog">
-            <div class="header">
-              <div class="post-thumb">
-                <img src="../assets/img/blog/blog-2.jpg" alt="">
-              </div>
-            </div>
-            <div class="body">
-              <h5 class="post-title"><a href="#">Source of Content Inspiration</a></h5>
-              <div class="post-date">Posted on <a href="#">27 Jan 2020</a></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 py-3 wow fadeInUp">
-          <div class="card-blog">
-            <div class="header">
-              <div class="post-thumb">
-                <img src="../assets/img/blog/blog-3.jpg" alt="">
-              </div>
-            </div>
-            <div class="body">
-              <h5 class="post-title"><a href="#">Source of Content Inspiration</a></h5>
-              <div class="post-date">Posted on <a href="#">27 Jan 2020</a></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 mt-4 text-center wow fadeInUp">
-          <a href="blog.html" class="btn btn-primary">View More</a>
-        </div>
-      </div>
-    </div>
-  </div> -->
+    </div> 
+  </div> 
 
   <footer class="page-footer bg-image" style="background-image: url(../assets/img/world_pattern.svg);" id="Contact">
     <div class="container-fluid">
@@ -581,14 +410,6 @@
 		  <p>(+34) 943 212 800<br>Ext. 2118</p>
           <p>adlarbide@ceit.es</p>
         </div>
-<!--        <div class="col-lg-3 py-3">
-          <h5>Newsletter</h5>
-          <p>Get updates, news or events on your mail.</p>
-          <form onsubmit=EmailSentNewsletter()>
-            <input type="text" class="form-control" placeholder="Enter your email.." id='NewsletterEmail'>
-            <button type="submit" class="btn btn-success btn-block mt-2">Subscribe</button>
-          </form>
-        </div> -->
       </div>
 
       <p class="text-center" id="copyright">Copyright &copy; 2020. This webpage is an adaptation of a template by <a href="https://macodeid.com/projects/seogram-free-seo-agency-template/" target="_blank">MACode ID</a></p>
@@ -606,72 +427,160 @@
 <script src="../assets/js/theme.js"></script>
 
 <script>
+	var im = document.getElementById('DefaultCampbell')
+	im.addEventListener('mouseover',MouseOver);
+	im.addEventListener('mouseout',MouseOut);
+	function MouseOver(e){
+		document.getElementById('TableCol').style.display = 'none'
+		document.getElementById('ThirdCol').style.display = 'none'
+	}
+	function MouseOut(e){
+		document.getElementById('TableCol').style.display = 'block'
+		document.getElementById('ThirdCol').style.display = 'block'
+	}
+	<!-- -->
 	function PlayTutorial(){
 		var tv = document.getElementById('TutorialVideo')
 		tv.currentTime = 0.;
 		tv.play();
 	}
-	function EmailSentNewsletter(){
-		var name = document.getElementById('NewsletterEmail').value
-		var txt = "This should send an email to this address: " + name
-		alert(txt)
-	}
 	function DisplayGeomTable(){
-	TableStyle = document.getElementById("GeometryTable").style
-	TableStyle.height = 140
-	TableStyle.modal = true
-	if (TableStyle.display == 'block'){
-		TableStyle.display = 'none'
-		document.getElementById("Sketches").style.display = 'none'
-		document.getElementById('SimSetup').style.filter = 'none';
-		document.getElementById('GeometryButton').disabled = false;
-		document.getElementById("AnalysisButton").disabled = false;
-		document.getElementById("AdvancedButton").disabled = false;
-	} else {
-		document.getElementById("Sketches").style.display = 'block'
-		TableStyle.display = 'block'
-		document.getElementById('SimSetup').style.filter = "blur(3px)";
-		document.getElementById('GeometryButton').disabled = true;
-		document.getElementById("AnalysisButton").disabled = true;
-		document.getElementById("AdvancedButton").disabled = true;
-	}
+		TableStyle = document.getElementById("GeometryTable").style
+		TableStyle.height = 140
+		TableStyle.modal = true
+		if (TableStyle.display == 'block'){
+			TableStyle.display = 'none'
+			document.getElementById("GeomSketches").style.display = 'none'
+			document.getElementById('SimSetup').style.filter = 'none';
+			document.getElementById('GeometryButton').disabled = false;
+			document.getElementById("AnalysisButton").disabled = false;
+			document.getElementById("AdvancedButton").disabled = false;
+		} else {
+			document.getElementById("GeomSketches").style.display = 'block'
+			TableStyle.display = 'block'
+			document.getElementById('SimSetup').style.filter = "blur(3px)";
+			document.getElementById('GeometryButton').disabled = true;
+			document.getElementById("AnalysisButton").disabled = true;
+			document.getElementById("AdvancedButton").disabled = true;
+		}
 	};
 	function DisplayAnalysisTable(){
-	TableStyle = document.getElementById("AnalysisTable").style
-	TableStyle.height = 140
-	TableStyle.modal = true
-	if (TableStyle.display == 'block'){
-		TableStyle.display = 'none'
-		document.getElementById('SimSetup').style.filter = 'none';
-		document.getElementById('GeometryButton').disabled = false;
-		document.getElementById("AnalysisButton").disabled = false;
-		document.getElementById("AdvancedButton").disabled = false;
-	} else {
-		TableStyle.display = 'block'
-		document.getElementById('SimSetup').style.filter = "blur(3px)";
-		document.getElementById('GeometryButton').disabled = true;
-		document.getElementById("AnalysisButton").disabled = true;
-		document.getElementById("AdvancedButton").disabled = true;
-	}
+		TableStyle = document.getElementById("AnalysisTable").style
+		TableStyle.height = 140
+		TableStyle.modal = true
+		if (TableStyle.display == 'block'){
+			TableStyle.display = 'none'
+			document.getElementById("AnalysisSketches").style.display = 'none'
+			document.getElementById('SimSetup').style.filter = 'none';
+			document.getElementById('GeometryButton').disabled = false;
+			document.getElementById("AnalysisButton").disabled = false;
+			document.getElementById("AdvancedButton").disabled = false;
+		} else {
+			TableStyle.display = 'block'
+			document.getElementById("AnalysisSketches").style.display = 'block'
+			document.getElementById('SimSetup').style.filter = "blur(3px)";
+			document.getElementById('GeometryButton').disabled = true;
+			document.getElementById("AnalysisButton").disabled = true;
+			document.getElementById("AdvancedButton").disabled = true;
+		}
 	};
 	function DisplayAdvancedTable(){
-	TableStyle = document.getElementById("AdvancedTable").style
-	TableStyle.height = 140
-	TableStyle.modal = true
-	if (TableStyle.display == 'block'){
-		TableStyle.display = 'none'
-		document.getElementById('SimSetup').style.filter = 'none';
-		document.getElementById('GeometryButton').disabled = false;
-		document.getElementById("AnalysisButton").disabled = false;
-		document.getElementById("AdvancedButton").disabled = false;
-	} else {
-		TableStyle.display = 'block'
-		document.getElementById('SimSetup').style.filter = "blur(3px)";
-		document.getElementById('GeometryButton').disabled = true;
-		document.getElementById("AnalysisButton").disabled = true;
-		document.getElementById("AdvancedButton").disabled = true;
+		TableStyle = document.getElementById("AdvancedTable").style
+		TableStyle.height = 140
+		TableStyle.modal = true
+		if (TableStyle.display == 'block'){
+			TableStyle.display = 'none'
+			document.getElementById("Mesh").style.display = 'none'
+			document.getElementById('SimSetup').style.filter = 'none';
+			document.getElementById('GeometryButton').disabled = false;
+			document.getElementById("AnalysisButton").disabled = false;
+			document.getElementById("AdvancedButton").disabled = false;
+		} else {
+			TableStyle.display = 'block'
+			document.getElementById("Mesh").style.display = 'block'
+			document.getElementById('SimSetup').style.filter = "blur(3px)";
+			document.getElementById('GeometryButton').disabled = true;
+			document.getElementById("AnalysisButton").disabled = true;
+			document.getElementById("AdvancedButton").disabled = true;
+		}
+	}	;
+	function CreateMatrix(nx,ny){
+		<!-- console.log(nx,ny) -->
+		var Out = []
+		for (var i=0; i<nx; i++){
+			Out[i] = [];
+			for (var j=0; j<ny; j++){
+				Out[i][j] = undefined;
+			}
+		}
+		return Out
 	}
- }	;
+	function TransposeMatrix(M){
+		Transposed = M[0].map((_, colIndex) => M.map(row => row[colIndex]))
+		return Transposed
+	}
+	async function LoadCampbell(){
+		T = document.getElementById("CampbellTable")
+		if (T.rows.length==0){
+			mytxt = await ReadTextFromGitHub()
+			Rows = mytxt.split('\n')
+			NRow = Rows.length - 1 
+			NCols = Rows[0].split(',').length
+			DataMatrix = CreateMatrix(NRow,NCols)
+			T = document.getElementById("CampbellTable")
+			for (var i=0 ; i<NRow ; i++){
+				txtRow = Rows[i].split(',');
+				for (var j=0 ; j<NCols ; j++){
+					DataMatrix[i][j] = txtRow[j];
+				}
+			}
+			DataMatrix = TransposeMatrix(DataMatrix);
+			for (var i=0 ; i<NCols ; i++){
+				Row = T.insertRow()
+				for (var j=0 ; j<NRow ; j++){
+					Cell = Row.insertCell()
+					Cell.innerHTML = DataMatrix[i][j]
+					Cell.style.backgroundColor = "rgba(4,144,144,0.4)"
+					Cell.style.borderLeft = "2px solid black"
+				}
+				Row.cells[0].style.borderLeft=""
+				Row.cells[0].style.backgroundColor="rgba(4,144,144,0.6)"
+			}
+			T.rows[0].style.borderBottom="2px solid black"
+			T.rows[0].style.backgroundColor="rgba(4,144,144,0.6)"
+		}
+		if(T.style.display=="none" || T.style.display==""){
+			document.getElementById("TableButton").innerHTML = "Hide"
+			T.style.display = "block"
+			document.getElementById("SecondCol").style.display="none"
+			document.getElementById("ThirdCol").style.display="none"
+		}else{
+			document.getElementById("TableButton").innerHTML = "Load"
+			T.style.display = "none"
+			document.getElementById("SecondCol").style.display="block"
+			document.getElementById("ThirdCol").style.display="block"
+		}
+		<!-- console.log(DataMatrix) -->
+		<!-- return DataMatrix -->
+	}
+	async function ReadTextFromGitHub(){
+		const url = 'https://raw.githubusercontent.com/adlar2de/SimulationTool/main/Files/CampbellData.csv'
+		const response = await fetch(url);
+		const data = await response.text();
+		return data
+	}
+	async function ChangeGeom(){
+		urlName = document.getElementById("AbqGeom").src
+		urlCutoff = urlName.length-14
+		n = Number(urlName[urlCutoff])
+		newN = n+1
+		if(newN==9){newN=1}
+		newUrl = urlName.substring(0,urlCutoff) + newN + urlName.substring(urlCutoff+1)
+		document.getElementById("AbqGeom").src = newUrl
+	}
+	function SimulationAlert(){
+		alert("Still not functional...")
+	}
 </script>
   
 </body>
