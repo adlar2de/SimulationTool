@@ -8,7 +8,7 @@
 
 	<title>Rotodynamic Simulation Tool</title>
 
-	<link rel="stylesheet" type="text/css" href="https://cdn.macodeid.com/maicons-v1.0/css/maicons.css">
+	<link rel="stylesheet" type="text/css" href="raw.githubusercontent.com/adlar2de/SimulationTool/gh-pages/Files/style/maicons.css">
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 
