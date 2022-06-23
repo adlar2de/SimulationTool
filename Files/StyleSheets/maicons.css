@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'maicons';
-  src:  url('../fonts/maicons.eot?c9nlkl');
-  src:  url('../fonts/maicons.eot?c9nlkl#iefix') format('embedded-opentype'),
-    url('../fonts/maicons.ttf?c9nlkl') format('truetype'),
-    url('../fonts/maicons.woff?c9nlkl') format('woff'),
-    url('../fonts/maicons.svg?c9nlkl#maicons') format('svg');
+  src:  url('https://github.com/adlar2de/SimulationTool/blob/main/Files/Fonts/maicons.eot?raw=true?c9nlkl');
+  src:  url('https://github.com/adlar2de/SimulationTool/blob/main/Files/Fonts/maicons.eot?raw=true?c9nlkl#iefix') format('embedded-opentype'),
+    url('https://github.com/adlar2de/SimulationTool/blob/main/Files/Fonts/maicons.ttf?raw=true?c9nlkl') format('truetype'),
+    url('https://github.com/adlar2de/SimulationTool/blob/main/Files/Fonts/maicons.woff?raw=true?c9nlkl') format('woff'),
+    url('https://github.com/adlar2de/SimulationTool/blob/main/Files/Fonts/maicons.svg?raw=true?c9nlkl#maicon
   font-weight: normal;
   font-style: normal;
   font-display: block;
